@@ -1,0 +1,25 @@
+# version: "3.5"
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    container_name: postgres_test
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    container_name: e2e-test
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+      - ./e2e:/app/e2e
+    command: npm run test:e2e
